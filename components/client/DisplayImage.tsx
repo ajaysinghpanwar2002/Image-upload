@@ -17,6 +17,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, userEmail, deleteImage }) 
                 width={100}
                 height={100}
                 objectFit="cover"
+                draggable="false"
             />
             {isOwnImage && (
                 <button
