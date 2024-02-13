@@ -1,11 +1,6 @@
 import { connectToDatabase, disconnectDatabase, fetchAllImagesFromDatabase, uploadImageToCloudinary, uploadImageToDatabase, deleteImageFromDatabase } from "@/helper/server-helper";
 import { NextRequest, NextResponse } from "next/server";
-
-const HTTP_STATUS_CODES = {
-    OK: 200,
-    CREATED: 201,
-    INTERNAL_SERVER_ERROR: 500,
-};
+import { HTTP_STATUS_CODES } from "@/constants";
 
 const handleServerError = (error: Error) => {
     console.error(error);

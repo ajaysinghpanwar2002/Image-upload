@@ -3,16 +3,7 @@
 import useImages from "@/hooks/useImages";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
-
-interface ImageCardProps {
-    image: {
-        id: string;
-        url: string;
-        useremail: string;
-    };
-    userEmail: string;
-    deleteImage: (id: string) => void;
-}
+import { ImageCardProps, DisplayImageProps, ImageProps } from "@/types"
 
 const ImageCard: React.FC<ImageCardProps> = ({ image, userEmail, deleteImage }) => {
     const isOwnImage = image.useremail === userEmail;
@@ -39,20 +30,8 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, userEmail, deleteImage }) 
     );
 };
 
-interface DisplayImageProps {
-    userEmail: string;
-}
-
-interface Image {
-    id: string;
-    url: string;
-    useremail: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
 const DisplayImage: React.FC<DisplayImageProps> = ({ userEmail }) => {
-    const [images, setImages] = useState<Image[]>([]);
+    const [images, setImages] = useState<ImageProps[]>([]);
     const fetchedImages = useImages();
 
     useEffect(() => {

@@ -1,17 +1,7 @@
 import prisma from "@/prisma"
 import bcrypt from 'bcrypt'
 import cloudinary from './cloudinary'
-
-const DATABASE_CONNECTION_ERROR = "Unable to connect to database";
-const DATABASE_DISCONNECTION_ERROR = "Unable to disconnect from database";
-const PASSWORD_HASH_ERROR = "Unable to generate hash of password";
-const PASSWORD_COMPARE_ERROR = "Unable to compare the passwords";
-const USER_CREATION_ERROR = "Unable to add user to database";
-const USER_FETCH_ERROR = "Unable to find users in the database";
-const USER_EMAIL_FETCH_ERROR = "Unable to find user with that email";
-const IMAGE_UPLOAD_ERROR = "Unable to upload data to database";
-const IMAGE_FETCH_ERROR = "Unable to fetch images from database";
-const IMAGE_DELETE_ERROR = "Unable to delete image from database";
+import {DATABASE_CONNECTION_ERROR, DATABASE_DISCONNECTION_ERROR, PASSWORD_HASH_ERROR, PASSWORD_COMPARE_ERROR, USER_CREATION_ERROR, USER_FETCH_ERROR, USER_EMAIL_FETCH_ERROR, IMAGE_UPLOAD_ERROR, IMAGE_FETCH_ERROR, IMAGE_DELETE_ERROR} from "@/constants"
 
 export const connectToDatabase = async () => {
     try {

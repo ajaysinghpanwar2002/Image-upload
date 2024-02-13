@@ -1,12 +1,8 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-
-interface SignupFormData {
-    name: string;
-    email: string;
-    password: string;
-}
+import { SignupFormData } from '@/types';
+import { REGISTER_URL, SIGN_IN_URL } from '@/constants';
 
 const FormField: React.FC<{
     label: string;
@@ -26,9 +22,6 @@ const FormField: React.FC<{
         />
     </div>
 );
-
-const REGISTER_URL = '/api/auth/register';
-const SIGN_IN_URL = '/sign-in';
 
 const SignupForm: React.FC = () => {
     const [formData, setFormData] = useState<SignupFormData>({ name: '', email: '', password: '' });

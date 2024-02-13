@@ -1,12 +1,10 @@
 import { authOptions } from "@/helper/auth";
 import { getServerSession } from "next-auth"
 import LogoutButton from "../client/LogoutButton";
+import { HOME_URL, SIGN_IN_URL, SIGN_UP_URL } from "@/constants";
 
 const Navbar: React.FC = async () => {
     const session = await getServerSession(authOptions);
-    const HOME_URL = '/';
-    const SIGN_IN_URL = '/sign-in';
-    const SIGN_UP_URL = '/sign-up';
 
     return (
         <nav className="flex justify-between items-center py-4 px-6 bg-gray-800 text-white">

@@ -1,10 +1,7 @@
 'use client';
 
 import { useState, useCallback } from "react";
-
-interface ImageUploadProps {
-    userEmail: string;
-}
+import { ImageUploadProps } from "@/types";
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ userEmail }) => {
     const [image, setImage] = useState<File | null>(null);

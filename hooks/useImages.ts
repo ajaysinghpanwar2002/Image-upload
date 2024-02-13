@@ -1,14 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-
-interface Image {
-    id: string;
-    url: string;
-    useremail: string;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Image } from "@/types";
 
 const useImages = () => {
     const [images, setImages] = useState<Image[]>([]);

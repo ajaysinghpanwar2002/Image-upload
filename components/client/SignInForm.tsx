@@ -2,8 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { signIn } from 'next-auth/react';
-
-const HOME_URL = '/';
+import { HOME_URL } from '@/constants';
 
 const FormField: React.FC<{
     label: string;

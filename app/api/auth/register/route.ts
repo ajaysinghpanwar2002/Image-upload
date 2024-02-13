@@ -1,12 +1,6 @@
 import { connectToDatabase, createUser, disconnectDatabase, getUserByEmail, hashPassword } from "@/helper/server-helper";
 import { NextResponse } from "next/server";
-
-const HTTP_STATUS_CODES = {
-    UNPROCESSABLE_ENTITY: 422,
-    CONFLICT: 409,
-    CREATED: 201,
-    INTERNAL_SERVER_ERROR: 500,
-};
+import { HTTP_STATUS_CODES } from "@/constants";
 
 const handleServerError = (error: Error) => {
     console.error(error);
