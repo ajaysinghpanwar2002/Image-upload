@@ -2,9 +2,11 @@
 
 import { useState, useCallback } from "react";
 import { ImageUploadProps } from "@/types";
+import Loading from "./Loading";
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ userEmail }) => {
     const [image, setImage] = useState<File | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const onChangeHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setImage(e.target.files?.[0] ?? null);
@@ -13,6 +15,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userEmail }) => {
     const onSubmitHandler = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!image) return;
+
+        setIsLoading(true);
 
         const formData = new FormData();
         formData.append("image", image);
@@ -26,9 +30,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userEmail }) => {
 
             if (response.ok) {
                 setImage(null);
+                window.location.reload();
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     }, [image, userEmail]);
 
@@ -43,8 +50,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userEmail }) => {
                 <button
                     type="submit"
                     className="px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700 transition duration-150 ease-in-out"
+                    disabled={isLoading}
                 >
-                    Upload
+                    {isLoading ? <Loading /> : 'Upload'}
                 </button>
             )}
         </form>

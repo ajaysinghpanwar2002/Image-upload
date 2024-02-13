@@ -4,6 +4,7 @@ import useImages from "@/hooks/useImages";
 import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { ImageCardProps, DisplayImageProps, ImageProps } from "@/types"
+import Loading from "./Loading";
 
 const ImageCard: React.FC<ImageCardProps> = ({ image, userEmail, deleteImage }) => {
     const isOwnImage = image.useremail === userEmail;
@@ -33,10 +34,14 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, userEmail, deleteImage }) 
 
 const DisplayImage: React.FC<DisplayImageProps> = ({ userEmail }) => {
     const [images, setImages] = useState<ImageProps[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const fetchedImages = useImages();
 
     useEffect(() => {
-        setImages(fetchedImages ?? []);
+        if (fetchedImages) {
+            setImages(fetchedImages);
+            setIsLoading(false);
+        }
     }, [fetchedImages]);
 
     const deleteImage = useCallback(async (id: string) => {
@@ -56,6 +61,10 @@ const DisplayImage: React.FC<DisplayImageProps> = ({ userEmail }) => {
             console.error("Failed to delete the image:", error);
         }
     }, [images]);
+
+    if (isLoading) {
+        return <Loading />
+    }
 
     return (
         <div className="grid grid-cols-3 gap-4">

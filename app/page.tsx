@@ -31,16 +31,6 @@ const UserPage = ({ session }: { session: Session }) => (
 
 async function HomePage() {
   const session = await getServerSession(authOptions);
-  console.log(session);
-  /**
-{
-  user: {
-    name: 'Ajay singh',
-    email: 'ajay.singh@xyzlab.in',
-    image: undefined
-  }
-}
-   */
 
   if (!session) {
     return <LoginPage />;
