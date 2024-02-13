@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String              @unique
+  hashedPassword    String?
+  createdAt         DateTime            @default(now()) @map("created_at")
+  updatedAt         DateTime            @updatedAt @map("updated_at")
+  Session           Session[]
+  VerificationToken VerificationToken[]
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String?  @map("user_id")
+  token     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  expiresAt DateTime
+  handle    String   @unique
+  User      User?    @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  expiresAt DateTime
+  userId    String?  @map("user_id")
+  User      User?    @relation(fields: [userId], references: [id])
+
+  @@map("verification_token")
+}
+
+model image {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  useremail    String?  @map("user_email")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
