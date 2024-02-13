@@ -1,21 +1,24 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
-function ImageUpload({ userEmail }: { userEmail: string }) {
+interface ImageUploadProps {
+    userEmail: string;
+}
+
+const ImageUpload: React.FC<ImageUploadProps> = ({ userEmail }) => {
     const [image, setImage] = useState<File | null>(null);
-    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            setImage(e.target.files[0]);
-        }
-    };
 
-    const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    const onChangeHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setImage(e.target.files?.[0] ?? null);
+    }, []);
+
+    const onSubmitHandler = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!image) return;
+
         const formData = new FormData();
         formData.append("image", image);
-        console.log("user email", userEmail);
         formData.append("userEmail", userEmail);
 
         try {
@@ -24,16 +27,13 @@ function ImageUpload({ userEmail }: { userEmail: string }) {
                 body: formData,
             });
 
-            const data = await response.json();
-            console.log(data);
-
             if (response.ok) {
                 setImage(null);
             }
         } catch (error) {
             console.error(error);
         }
-    };
+    }, [image, userEmail]);
 
     return (
         <form onSubmit={onSubmitHandler} className="flex flex-col space-y-4 items-center p-4">
@@ -52,6 +52,6 @@ function ImageUpload({ userEmail }: { userEmail: string }) {
             )}
         </form>
     );
-}
+};
 
 export default ImageUpload;

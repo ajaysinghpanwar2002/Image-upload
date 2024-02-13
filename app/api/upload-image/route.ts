@@ -1,5 +1,16 @@
-import { connectToDatabase, disconnectDatabase, fetchAllImagesDatabase, uploadImageToCloudinary, uploadImageUrlToMongodb, deleteImageFromMongodb } from "@/helper/server-helper";
+import { connectToDatabase, disconnectDatabase, fetchAllImagesFromDatabase, uploadImageToCloudinary, uploadImageToDatabase, deleteImageFromDatabase } from "@/helper/server-helper";
 import { NextRequest, NextResponse } from "next/server";
+
+const HTTP_STATUS_CODES = {
+    OK: 200,
+    CREATED: 201,
+    INTERNAL_SERVER_ERROR: 500,
+};
+
+const handleServerError = (error: Error) => {
+    console.error(error);
+    return NextResponse.json({ message: "Server Error" }, { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR });
+};
 
 export const POST = async (req: NextRequest) => {
     const formData = await req.formData();
@@ -9,31 +20,29 @@ export const POST = async (req: NextRequest) => {
     try {
         const { secure_url } = await uploadImageToCloudinary(image, "blinkit-image") as any;
         await connectToDatabase();
-        const uploadedImageData = await uploadImageUrlToMongodb(secure_url, email);
-        return NextResponse.json({ uploadedImageData }, { status: 201 })
+        const uploadedImageData = await uploadImageToDatabase(secure_url, email);
+        return NextResponse.json({ uploadedImageData }, { status: HTTP_STATUS_CODES.CREATED });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ message: "Server Error" }, { status: 500 })
+        return handleServerError(error as Error);
     } finally {
         await disconnectDatabase();
     }
-}
+};
 
 export const GET = async () => {
-    const Images = await fetchAllImagesDatabase();
-    return NextResponse.json({ images: Images, total: Images.length }, { status: 201 })
-}
+    const Images = await fetchAllImagesFromDatabase();
+    return NextResponse.json({ images: Images, total: Images.length }, { status: HTTP_STATUS_CODES.OK });
+};
 
 export const DELETE = async (req: NextRequest) => {
     const { id } = await req.json();
     try {
         await connectToDatabase();
-        await deleteImageFromMongodb(id);
-        return NextResponse.json({ message: "Image Deleted" }, { status: 200 })
+        await deleteImageFromDatabase(id);
+        return NextResponse.json({ message: "Image Deleted" }, { status: HTTP_STATUS_CODES.OK });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ message: "Server Error" }, { status: 500 })
+        return handleServerError(error as Error);
     } finally {
         await disconnectDatabase();
     }
-}
+};

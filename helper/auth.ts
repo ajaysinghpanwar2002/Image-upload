@@ -1,4 +1,4 @@
-import { checkHashPassword, connectToDatabase, disconnectDatabase, findUserUsingEmail } from "@/helper/server-helper";
+import { comparePassword, connectToDatabase, disconnectDatabase, getUserByEmail } from "@/helper/server-helper";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
@@ -23,9 +23,9 @@ export const authOptions: NextAuthOptions = {
                 if (!credentials || !credentials.email || !credentials.password) return null;
                 try {
                     await connectToDatabase();
-                    const user = await findUserUsingEmail(credentials.email);
+                    const user = await getUserByEmail(credentials.email);
                     if (!user?.hashedPassword) return null;
-                    const isPasswordCorrect = await checkHashPassword(credentials.password, user.hashedPassword);
+                    const isPasswordCorrect = await comparePassword(credentials.password, user.hashedPassword);
                     if (isPasswordCorrect) return user;
                     else return null;
                 } catch (error) {

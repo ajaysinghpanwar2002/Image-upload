@@ -2,7 +2,7 @@
 
 import useImages from "@/hooks/useImages";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface ImageCardProps {
     image: {
@@ -14,7 +14,7 @@ interface ImageCardProps {
     deleteImage: (id: string) => void;
 }
 
-function ImageCard({ image, userEmail, deleteImage }: ImageCardProps) {
+const ImageCard: React.FC<ImageCardProps> = ({ image, userEmail, deleteImage }) => {
     const isOwnImage = image.useremail === userEmail;
 
     return (
@@ -37,11 +37,12 @@ function ImageCard({ image, userEmail, deleteImage }: ImageCardProps) {
             )}
         </div>
     );
-}
+};
 
 interface DisplayImageProps {
     userEmail: string;
 }
+
 interface Image {
     id: string;
     url: string;
@@ -50,15 +51,15 @@ interface Image {
     updatedAt: string;
 }
 
-function DisplayImage({ userEmail }: DisplayImageProps) {
+const DisplayImage: React.FC<DisplayImageProps> = ({ userEmail }) => {
     const [images, setImages] = useState<Image[]>([]);
     const fetchedImages = useImages();
 
     useEffect(() => {
-        setImages(fetchedImages);
+        setImages(fetchedImages ?? []);
     }, [fetchedImages]);
 
-    const deleteImage = async (id: string) => {
+    const deleteImage = useCallback(async (id: string) => {
         try {
             const response = await fetch("/api/upload-image", {
                 method: "DELETE",
@@ -74,7 +75,7 @@ function DisplayImage({ userEmail }: DisplayImageProps) {
         } catch (error) {
             console.error("Failed to delete the image:", error);
         }
-    };
+    }, [images]);
 
     return (
         <div className="grid grid-cols-3 gap-4">
@@ -88,6 +89,6 @@ function DisplayImage({ userEmail }: DisplayImageProps) {
             ))}
         </div>
     );
-}
+};
 
 export default DisplayImage;

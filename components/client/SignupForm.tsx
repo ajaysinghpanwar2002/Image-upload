@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { redirect } from 'next/navigation'
+import React, { useState, useCallback } from 'react';
 
 interface SignupFormData {
     name: string;
@@ -9,22 +8,44 @@ interface SignupFormData {
     password: string;
 }
 
+const FormField: React.FC<{
+    label: string;
+    type: string;
+    value: string;
+    onChange: (value: string) => void;
+}> = ({ label, type, value, onChange }) => (
+    <div>
+        <label htmlFor={label} className="block">{label}</label>
+        <input
+            type={type}
+            id={label}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+            required
+        />
+    </div>
+);
+
+const REGISTER_URL = '/api/auth/register';
+const SIGN_IN_URL = '/sign-in';
+
 const SignupForm: React.FC = () => {
     const [formData, setFormData] = useState<SignupFormData>({ name: '', email: '', password: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const validateEmail = (email: string) => {
+    const isEmailValid = useCallback((email: string) => {
         return /\S+@\S+\.\S+/.test(email);
-    };
+    }, []);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.name || !formData.email || !formData.password) {
             setError('Please fill in all fields');
             return;
         }
-        if (!validateEmail(formData.email)) {
+        if (!isEmailValid(formData.email)) {
             setError('Invalid email format');
             return;
         }
@@ -33,8 +54,7 @@ const SignupForm: React.FC = () => {
             return;
         }
         setError('');
-        // Call your API endpoint
-        const response = await fetch('/api/auth/register', {
+        const response = await fetch(REGISTER_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -45,46 +65,19 @@ const SignupForm: React.FC = () => {
         if (response.ok) {
             setSuccess('User registered successfully');
             setFormData({ name: '', email: '', password: '' });
-            redirect('/sign-in')
+            window.location.href = SIGN_IN_URL;
         } else {
             setError(data.message || 'An error occurred during registration');
         }
-    };
+    }, [formData, isEmailValid]);
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="text-red-500">{error}</div>}
             {success && <div className="text-green-500">{success}</div>}
-            <div>
-                <label htmlFor="name" className="block">Name</label>
-                <input
-                    type="text"
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-                />
-            </div>
-            <div>
-                <label htmlFor="email" className="block">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-                />
-            </div>
-            <div>
-                <label htmlFor="password" className="block">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
-                />
-            </div>
+            <FormField label="Name" type="text" value={formData.name} onChange={(value) => setFormData({ ...formData, name: value })} />
+            <FormField label="Email" type="email" value={formData.email} onChange={(value) => setFormData({ ...formData, email: value })} />
+            <FormField label="Password" type="password" value={formData.password} onChange={(value) => setFormData({ ...formData, password: value })} />
             <button type="submit" className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
                 Sign Up
             </button>
